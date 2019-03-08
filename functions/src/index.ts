@@ -7,17 +7,14 @@ exports.uploadNewProductImage =
   functions.storage.object().onFinalize((object) => {
     return new Promise((resolve, reject) => {
       if(object && object.name && object.metadata) {
-        console.log('Full uploaded object: ' + JSON.stringify(object))
         const fileMeta = {
           lastModified: object.updated,
           name: object.metadata.originalName,
           type: 'image/png',
           size: object.size
         };
-        console.log('Object Name: ' + object.name);
         const nameForDoc = object.name.split('/')[1];
                             // product-pictures/kjsdfjksdkjfs
-        console.log('Object Name for DOC (ID): ' + nameForDoc);
         admin.firestore().collection('files')
           .doc(nameForDoc)
           .set(fileMeta)
