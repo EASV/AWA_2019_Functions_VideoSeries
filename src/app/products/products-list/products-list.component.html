@@ -2,8 +2,10 @@
 <button routerLink="add">+</button>
 <ul>
   <li class="text" *ngFor="let product of products | async">
-    <img [src]="product.url" *ngIf="product.url" style="width: 24px; height: 24px;">
-    {{product.name}} -- {{product.id}}
-    <button (click)="deleteProduct(product)">Delete</button>
+      <img [src]="product.url"
+           *ngIf="product.url"
+           style="width: 24px; height: 24px;">
+      {{product.name}} -- {{product.id}}
+      <button (click)="deleteProduct(product)">Delete</button>
   </li>
 </ul>

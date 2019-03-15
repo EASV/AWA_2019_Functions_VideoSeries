@@ -5,6 +5,7 @@ import {Product} from './product.model';
 import {catchError, first, map, switchMap, tap} from 'rxjs/operators';
 import {ImageMetadata} from '../../files/shared/image-metadata';
 import {FileService} from '../../files/shared/file.service';
+import {HttpClient} from '@angular/common/http';
 
 const collection_path = 'products';
 
@@ -14,7 +15,8 @@ const collection_path = 'products';
 export class ProductService {
 
   constructor(private db: AngularFirestore,
-              private fs: FileService) {}
+              private fs: FileService,
+              private http: HttpClient) {}
 
   getProducts(): Observable<Product[]> {
     return this.db
@@ -78,7 +80,19 @@ export class ProductService {
     if (imageMeta && imageMeta.fileMeta
       && imageMeta.fileMeta.name && imageMeta.fileMeta.type &&
       (imageMeta.imageBlob || imageMeta.base64Image)) {
-      return this.fs.uploadImage(imageMeta)
+      const endPointUrl =
+        'https://us-central1-awesome-products-app.cloudfunctions.net/products';
+      const productToSend: any = {
+        name: product.name,
+        image: {
+          base64: imageMeta.base64Image,
+          name: imageMeta.fileMeta.name,
+          type: imageMeta.fileMeta.type,
+          size: imageMeta.fileMeta.size
+        }
+      };
+      return this.http.post<Product>(endPointUrl, productToSend);
+      /*return this.fs.uploadImage(imageMeta)
         .pipe(
           switchMap(metadata => {
             product.pictureId = metadata.id;
@@ -87,7 +101,7 @@ export class ProductService {
           catchError((err, caught) => {
             return throwError(err);
           })
-        );
+        );*/
     } else {
       return throwError('You need better metadata');
     }

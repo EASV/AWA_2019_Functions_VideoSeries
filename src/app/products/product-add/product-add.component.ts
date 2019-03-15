@@ -52,6 +52,7 @@ export class ProductAddComponent implements OnInit {
       this.imageChangedEvent.target.files.length > 0) {
       const fileBeforeCrop = this.imageChangedEvent.target.files[0];
       return {
+        base64Image: this.croppedImage,
         imageBlob: this.croppedBlob,
         fileMeta: {
           name: fileBeforeCrop.name,

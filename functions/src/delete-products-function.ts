@@ -7,17 +7,22 @@ exports.deleteProduct = functions.firestore
     return new Promise( async (resolve, reject) => {
       const deletedProduct = snap.data();
       if(deletedProduct) {
-        await admin.firestore().collection('files')
-          .doc(deletedProduct.pictureId)
-          .delete()
-          .then();
+        try{
+          await admin.firestore().collection('files')
+            .doc(deletedProduct.pictureId)
+            .delete()
+            .then();
 
-        const restultFromStorage = await admin.storage()
-          .bucket().file('product-pictures/' + deletedProduct.pictureId)
-          .delete()
-          .then()
+          const restultFromStorage = await admin.storage()
+            .bucket().file('product-pictures/' + deletedProduct.pictureId)
+            .delete()
+            .then()
 
-        resolve(restultFromStorage);
+          resolve(restultFromStorage);
+        } catch (e) {
+          reject(e);
+        }
+
 
         /*
         admin.firestore().collection('files')
